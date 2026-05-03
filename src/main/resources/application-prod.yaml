@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: ${YOEDU_DB_URL:jdbc:mysql://localhost:3306/yoedu_demo?createDatabaseIfNotExist=true}
+    #$ gọi là biến môi trường (vd như password bth k để đây mà để trong biến môi trường khi deploy)
+    username: ${YOEDU_DB_USERNAME:root}
+    password: ${YOEDU_DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
