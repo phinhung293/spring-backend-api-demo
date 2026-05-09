@@ -2,7 +2,6 @@ package com.yo.day1.controller;
 
 import com.yo.day1.common.ApiResponse;
 import com.yo.day1.domain.entity.Course;
-import com.yo.day1.reponsitory.CourseRepository;
 import com.yo.day1.service.CourseService;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;

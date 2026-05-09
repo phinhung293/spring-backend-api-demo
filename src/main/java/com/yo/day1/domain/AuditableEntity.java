@@ -1,4 +1,4 @@
-package com.yo.day1.domain.enums;
+package com.yo.day1.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @Setter
 @Getter
-public class AuditableEntity {//Kiểm soát ghi nhận ngày nhận ngày gửi
+public class AuditableEntity extends BaseEntity {//Kiểm soát ghi nhận ngày nhận ngày gửi
     @CreationTimestamp
     @Column(name="created_at",nullable = false,updatable = false)
     private LocalDateTime createdAt;//sinh ra 1 lần khi dữ liệu được tạo ra
