@@ -6,6 +6,7 @@ import com.yo.day1.dto.room.RoomUpsertRequest;
 import com.yo.day1.service.RoomService;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class RoomController {
     private final RoomService roomService;
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ApiResponse<List<RoomResponse>> findAll(){
         return ApiResponse.success(roomService.findAll());
     }
