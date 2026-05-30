@@ -27,6 +27,11 @@ public class StudentController {
     }
 
     @GetMapping(value = "/{id}")
+    @org.springframework.security.access.prepost.PreAuthorize(
+            "hasAnyRole('ADMIN', 'ACADEMIC_STAFF') or " +
+                    "(hasRole('PARENT') and @studentServiceImpl.getStudent(#id).parent != null and " +
+                    "principal.username == @studentServiceImpl.getStudent(#id).parent.user.username)"
+    )
     public ResponseEntity<StudentResponse> findById(@PathVariable long id) {
         //return ResponseEntity.ok(studentService.findById(id));
 
@@ -53,5 +58,15 @@ public class StudentController {
         studentService.delete(id);
         return ResponseEntity.ok().build();
 
+    }
+    // Test tìm kiếm: GET http://localhost:8080/api/students/search?search=Name
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<StudentResponse>> search(@RequestParam(value = "search", required = false) String search) {
+        return ResponseEntity.ok(studentService.findAll(search));
+    }
+    // Test lọc trạng thái: GET http://localhost:8080/api/students/status/ACTIVE
+    @GetMapping(value = "/status/{status}")
+    public ResponseEntity<List<StudentResponse>> findByStatus(@PathVariable("status") com.yo.day1.domain.enums.StudentStatus status) {
+        return ResponseEntity.ok(studentService.findByStatus(status));
     }
 }

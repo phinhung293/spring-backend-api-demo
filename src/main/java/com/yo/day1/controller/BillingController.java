@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Billing", description = "Invoice and tuition billing endpoints.")
 @SecurityRequirement(name = "bearerAuth")
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF', 'CASHIER')")
 public class BillingController {
 
     private final BillingService billingService;
@@ -51,5 +53,32 @@ public class BillingController {
     })
     public ApiResponse<List<InvoiceResponse>> findInvoicesByStudent(@Parameter(description = "Student identifier", example = "1") @PathVariable Long studentId, @Parameter(hidden = true) Principal principal) throws BadRequestException, NotFoundException {
         return ApiResponse.success(billingService.findInvoicesByStudent(studentId, principal.getName()));
+    }
+    // POST http://localhost:8080/api/invoices/bulk-create
+    @PostMapping("/bulk-create")
+    public ResponseEntity<List<InvoiceResponse>> createInvoices(@Valid @RequestBody InvoiceCreateRequest req) {
+        return ResponseEntity.ok(billingService.createInvoicesForTwoMonths(req));
+    }
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<InvoiceResponse>> getStudentInvoices(
+            @PathVariable Long studentId,
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year) {
+
+        return ResponseEntity.ok(billingService.getInvoicesByStudent(studentId, month, year));
+    }
+    // POST http://localhost:8080/api/billing/bulk
+    @PostMapping("/bulk")
+    public ResponseEntity<List<InvoiceResponse>> createInvoicesForTwoMonths(@Valid @RequestBody InvoiceCreateRequest request) {
+        return ResponseEntity.ok(billingService.createInvoicesForTwoMonths(request));
+    }
+    // GET http://localhost:8080/api/billing/student/1?month=&year=
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<InvoiceResponse>> getStudentInvoicesWithFilter(
+            @PathVariable Long studentId,
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year,
+            java.security.Principal principal) {
+        return ResponseEntity.ok(billingService.findInvoicesByStudentAndFilter(studentId, month, year, principal.getName()));
     }
 }

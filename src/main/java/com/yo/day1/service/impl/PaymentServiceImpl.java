@@ -3,19 +3,24 @@ package com.yo.day1.service.impl;
 import com.yo.day1.common.exception.NotFoundException;
 import com.yo.day1.domain.entity.Payment;
 import com.yo.day1.domain.entity.TuitionInvoice;
+import com.yo.day1.domain.enums.InvoiceStatus;
 import com.yo.day1.dto.payment.PaymentResponse;
 import com.yo.day1.repository.PaymentRepository;
+import com.yo.day1.repository.TuitionInvoiceRepository;
 import com.yo.day1.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final PaymentRepository paymentRepository;
+    private final TuitionInvoiceRepository tuitionInvoiceRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -71,5 +76,22 @@ public class PaymentServiceImpl implements PaymentService {
                 finalAmount,
                 balanceAmount
         );
+    }
+    public void updateInvoiceStatusAfterPayment(TuitionInvoice invoice, BigDecimal newPaidAmount) {
+        // Cộng dồn số tiền mới đóng vào tổng số tiền đã thanh toán trước đó
+        BigDecimal totalPaid = invoice.getAmountPaid().add(newPaidAmount);
+        invoice.setAmountPaid(totalPaid);
+
+        // So sánh số tiền đã đóng với số tiền phải đóng (amountDue)
+        if (totalPaid.compareTo(BigDecimal.ZERO) == 0) {
+            invoice.setStatus(InvoiceStatus.UNPAID);
+        } else if (totalPaid.compareTo(invoice.getAmountPaid()) >= 0) {
+            invoice.setStatus(InvoiceStatus.PAID);
+        } else {
+            invoice.setStatus(InvoiceStatus.PARTIAL);
+        }
+
+        invoice.setUpdatedAt(LocalDateTime.now());
+        tuitionInvoiceRepository.save(invoice);
     }
 }

@@ -67,19 +67,38 @@ public class AttendanceServiceImpl implements AttendanceService {
             throw ex;
         }
 
-        if (request.getStatus() == AttendanceStatus.ABSENT && saved.getStudent().getParent() != null) {
-            Notification notification = new Notification();
-            notification.setRecipientType(NotificationRecipientType.PARENT);
-            notification.setRecipientRefId(saved.getStudent().getParent().getId());
-            notification.setStudent(saved.getStudent());
-            notification.setType(NotificationType.ABSENCE);
-            notification.setTitle("Thông báo vắng học");
-            notification.setContent("Học viên " + saved.getStudent().getFullName() + " vắng buổi học ngày "
-                    + saved.getAttendanceDate() + ".");
-            notification.setRelatedEntityType("attendance");
-            notification.setRelatedEntityId(saved.getId());
-            notificationRepository.save(notification);
+        if (saved.getStudent().getParent() != null) {
+
+            if (request.getStatus() == AttendanceStatus.ABSENT) {
+                // Gửi thông báo cho trường hợp vắng học (ABSENT)
+                Notification notification = new Notification();
+                notification.setRecipientType(NotificationRecipientType.PARENT);
+                notification.setRecipientRefId(saved.getStudent().getParent().getId());
+                notification.setStudent(saved.getStudent());
+                notification.setType(NotificationType.ABSENCE);
+                notification.setTitle("Thông báo vắng học");
+                notification.setContent("Học viên " + saved.getStudent().getFullName() + " vắng buổi học ngày "
+                        + saved.getAttendanceDate() + ".");
+                notification.setRelatedEntityType("attendance");
+                notification.setRelatedEntityId(saved.getId());
+                notificationRepository.save(notification);
+
+            } else if (request.getStatus() == AttendanceStatus.LATE) {
+                // Gửi thông báo cho trường hợp ĐI TRỄ (LATE)
+                Notification notification = new Notification();
+                notification.setRecipientType(NotificationRecipientType.PARENT);
+                notification.setRecipientRefId(saved.getStudent().getParent().getId());
+                notification.setStudent(saved.getStudent());
+                notification.setType(NotificationType.ABSENCE);
+                notification.setTitle("Thông báo đi học muộn");
+                notification.setContent("Học viên " + saved.getStudent().getFullName() + " đã vào lớp muộn trong buổi học ngày "
+                        + saved.getAttendanceDate() + ". Vui lòng nhắc nhở học viên đi học đúng giờ.");
+                notification.setRelatedEntityType("attendance");
+                notification.setRelatedEntityId(saved.getId());
+                notificationRepository.save(notification);
+            }
         }
+
         return toResponse(saved);
     }
 

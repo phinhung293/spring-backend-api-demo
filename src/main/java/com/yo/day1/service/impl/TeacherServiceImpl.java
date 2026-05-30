@@ -100,4 +100,11 @@ public class TeacherServiceImpl implements TeacherService {
 
         teacherRepository.delete(teacher);
     }
+    @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public java.util.List<com.yo.day1.dto.teacher.TeacherResponse> findByStatus(com.yo.day1.domain.enums.TeacherStatus status) {
+        return teacherRepository.findByStatus(status).stream()
+                .map(teacher -> mapper.map(teacher, com.yo.day1.dto.teacher.TeacherResponse.class))
+                .toList();
+    }
 }

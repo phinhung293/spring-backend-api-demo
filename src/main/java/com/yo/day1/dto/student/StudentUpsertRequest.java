@@ -21,6 +21,7 @@ public class StudentUpsertRequest {
     private String studentCode;
 
     @Size(min = 2)
+    @NotBlank(message = "Họ và tên không được để trống")
     private String fullName;
 
     //K làm gtr MIN, MAX chỗ này đc,...
@@ -45,7 +46,7 @@ public class StudentUpsertRequest {
     private Long parentId; //Sửa phần này: Chỉ cần id là đủ r
     //Khóa ngoại
     //K có parentID được không? -> Tùy theo quy định (vd: Đại học thì đc, còn c3 thì k nên )
-
+    @NotNull(message = "Trạng thái không được để trống")
     private StudentStatus status = StudentStatus.ACTIVE;
 
     @Min(value = 0)

@@ -44,7 +44,10 @@ public class StudentServiceImpl implements StudentService {
     public StudentResponse create(StudentUpsertRequest req) {
         Student stu = mapper.map(req, Student.class); //trong đối tượng studentupserRe sẽ k có Partent, k có print, k có createAt và UpdateAt.
         // Có parentID nma k map về đây đc
-
+        // Kiểm tra trùng mã khi tạo mới
+        if (studentRepository.existsByStudentCode(req.getStudentCode())) {
+            throw new com.yo.day1.common.exception.ConflictException("Mã học viên đã tồn tại trên hệ thống!");
+        }
         //Những gì còn thiếu phải làm = tay
         parentRepository.findById(req.getParentId())
                 .ifPresent(p->stu.setParent(p));
@@ -56,6 +59,10 @@ public class StudentServiceImpl implements StudentService {
 
     public StudentResponse update(Long id, StudentUpsertRequest req) {
         Student stu = mapper.map(req, Student.class);
+        // Kiểm tra trùng mã với người khác khi cập nhật
+        if (studentRepository.existsByStudentCodeAndIdNot(req.getStudentCode(), id)) {
+            throw new com.yo.day1.common.exception.ConflictException("Mã học viên đã thuộc về một học sinh khác!");
+        }
         stu.setId(id);
         parentRepository.findById(req.getParentId())
                 .ifPresent(p->stu.setParent(p));
@@ -120,11 +127,22 @@ public class StudentServiceImpl implements StudentService {
         }
         return student;
     }
-
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
     public Student getStudent(Long id) throws NotFoundException {
         return studentRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Student not found: " + id));
     }
-
-
+    public List<StudentResponse> findAll(String search) {
+        if (search != null && !search.isBlank()) {
+            return studentRepository.searchByCodeOrName(search.trim()).stream()
+                    .map(this::map2)
+                    .toList();
+        }
+        return findByAll(); // Nếu search trống thì gọi lại hàm lấy tất cả cũ của bạn
+    }
+    public List<StudentResponse> findByStatus(com.yo.day1.domain.enums.StudentStatus status) {
+        return studentRepository.findByStatus(status).stream()
+                .map(this::map2) // Sử dụng hàm map2 có sẵn của bạn
+                .toList();
+    }
 }

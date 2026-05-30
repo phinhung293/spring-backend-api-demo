@@ -2,6 +2,7 @@ package com.yo.day1.domain.entity;
 
 import com.yo.day1.domain.AuditableEntity;
 import com.yo.day1.domain.enums.TeacherRole;
+import com.yo.day1.domain.enums.TeacherStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,4 +37,7 @@ public class Teacher extends AuditableEntity {
 
     @Column(length = 255)
     private String note;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private TeacherStatus status = TeacherStatus.ACTIVE;
 }

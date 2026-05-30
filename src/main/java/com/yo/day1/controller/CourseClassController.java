@@ -25,9 +25,6 @@ public class CourseClassController {
         return ResponseEntity.ok(result);
     }
 
-    // =========================
-    // GET BY ID
-    // =========================
     @GetMapping("/{id}")
     public ResponseEntity<CourseClassResponse> findById(
             @PathVariable Long id
@@ -52,9 +49,7 @@ public class CourseClassController {
         return ResponseEntity.ok(result);
     }
 
-    // =========================
-    // UPDATE
-    // =========================
+    // update
     @PutMapping("/{id}")
     public ResponseEntity<CourseClassResponse> update(
             @PathVariable Long id,
@@ -85,5 +80,15 @@ public class CourseClassController {
                 courseClassService.search(keyword);
 
         return ResponseEntity.ok(result);
+    }
+    //GET /api/course-classes?status=OPEN
+    @GetMapping
+    public ResponseEntity<List<CourseClassResponse>> getCourseClasses(
+            @RequestParam(value = "status", required = false) com.yo.day1.domain.enums.ClassStatus status) {
+
+        if (status != null) {
+            return ResponseEntity.ok(courseClassService.findByStatus(status));
+        }
+        return ResponseEntity.ok(courseClassService.findAll());
     }
 }

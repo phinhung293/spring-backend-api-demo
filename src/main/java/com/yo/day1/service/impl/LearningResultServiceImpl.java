@@ -18,6 +18,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,6 +44,8 @@ public class LearningResultServiceImpl implements LearningResultService {
         item.setCourseClass(courseClassService.getCourseClass(request.getCourseClassId()));
         item.setResultMonth(request.getResultMonth());
         item.setScore(request.getScore());
+        //Tự động tính xếp loại trước khi lưu
+        item.setGrade(calculateGrade(request.getScore()));
         item.setTeacherComment(request.getTeacherComment());
         item.setCreatedByUser(user);
         try {
@@ -80,5 +83,28 @@ public class LearningResultServiceImpl implements LearningResultService {
         Throwable cause = ex.getMostSpecificCause();
         String message = cause != null ? cause.getMessage() : ex.getMessage();
         return message != null && message.toLowerCase(Locale.ROOT).contains("uq_learning_result");
+    }
+    private String calculateGrade(BigDecimal score) {
+        if (score == null) {
+            return "Chưa có điểm";
+        }
+
+        if (score.compareTo(BigDecimal.valueOf(8.5)) >= 0) { // score >= 8.5
+            return "Giỏi";
+        }
+        if (score.compareTo(BigDecimal.valueOf(7.0)) >= 0) { // score >= 7.0
+            return "Khá";
+        }
+        if (score.compareTo(BigDecimal.valueOf(5.0)) >= 0) { // score >= 5.0
+            return "Trung bình";
+        }
+        return "Yếu"; // score < 5.0
+    }
+    @Override
+    @Transactional(readOnly = true)
+    public List<LearningResultResponse> findByClassId(Long classId, Integer month, Integer year) {
+        return learningResultRepository.findByClassIdAndMonthAndYear(classId, month, year).stream()
+                .map(this::toResponse)
+                .toList();
     }
 }
