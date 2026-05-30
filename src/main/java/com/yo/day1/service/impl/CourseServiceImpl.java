@@ -16,6 +16,10 @@ public class CourseServiceImpl  implements CourseService {
     public List<Course> findAll() {
         return courseRepository.findAll();
     }
+    @Override
+    public List<Course> findByCourseActive(){
+        return courseRepository.findByCourseActive();
+    }
     public Optional<Course> findById(Long id) {
         return courseRepository.findById(id);
     }

@@ -15,5 +15,8 @@ public record ApiResponse <T>(boolean success, T data, String message, LocalDate
     public  static ApiResponse <Void> error(String message) {
         return new ApiResponse<>(false,null, message,LocalDateTime.now());
     }
+    public static <T> ApiResponse <T> error(String message, T errorData) {
+        return new ApiResponse<>(false, errorData, message, LocalDateTime.now());
+    }
     //dùng static vì k cần phải tạo đối tượng trc khi sài
 }
