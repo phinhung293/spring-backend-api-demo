@@ -36,4 +36,5 @@ public class LearningResult extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id")
     private User createdByUser;
+    private String grade;
 }

@@ -6,6 +6,7 @@ import com.yo.day1.dto.learningresult.LearningResultResponse;
 import com.yo.day1.service.LearningResultService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +29,12 @@ public class LearningResultController {
     public ApiResponse<List<LearningResultResponse>> findByStudentId(@PathVariable Long studentId, Principal principal) {
         return ApiResponse.success(learningResultService.findByStudentId(studentId, principal.getName()));
     }
+    @GetMapping("/class/{classId}")
+    public ResponseEntity<List<LearningResultResponse>> getByClass(
+            @PathVariable Long classId,
+            @RequestParam(value = "month", required = false) Integer month,
+            @RequestParam(value = "year", required = false) Integer year) {
 
+        return ResponseEntity.ok(learningResultService.findByClassId(classId, month, year));
+    }
 }

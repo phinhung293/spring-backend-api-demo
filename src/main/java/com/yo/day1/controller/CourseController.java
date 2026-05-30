@@ -14,6 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "/api/course")
 @RequiredArgsConstructor
+@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF')")
 public class CourseController {
     private final CourseService courseService;
     @GetMapping

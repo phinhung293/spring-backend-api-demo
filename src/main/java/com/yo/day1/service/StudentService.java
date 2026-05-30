@@ -20,5 +20,7 @@ public interface StudentService {
     void delete(Long id) throws NotFoundException;
     Student getStudentForParent(Long studentId, Long parentId) throws NotFoundException;
     Student getStudent(Long id) throws NotFoundException;
+    List<StudentResponse> findAll(String search);
+    List<StudentResponse> findByStatus(com.yo.day1.domain.enums.StudentStatus status);
 
 }

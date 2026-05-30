@@ -13,5 +13,7 @@ import java.util.List;
 public interface BillingService {
     InvoiceResponse createInvoice(InvoiceCreateRequest request) throws NotFoundException;
     List<InvoiceResponse> findInvoicesByStudent(Long studentId, String username) throws BadRequestException, NotFoundException;
-
+    List<InvoiceResponse> createInvoicesForTwoMonths(InvoiceCreateRequest request) throws NotFoundException;
+    List<InvoiceResponse> findInvoicesByStudentAndFilter(Long studentId, Integer month, Integer year, String username) throws BadRequestException, NotFoundException;
+    List<InvoiceResponse> getInvoicesByStudent(Long studentId, Integer month, Integer year);
 }

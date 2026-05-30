@@ -7,6 +7,7 @@ import com.yo.day1.domain.entity.CourseClass;
 import com.yo.day1.domain.entity.Enrollment;
 import com.yo.day1.domain.entity.Student;
 import com.yo.day1.domain.entity.User;
+import com.yo.day1.domain.enums.ClassStatus;
 import com.yo.day1.domain.enums.EnrollmentStatus;
 import com.yo.day1.dto.enrollment.EnrollmentCreateRequest;
 import com.yo.day1.dto.enrollment.EnrollmentResponse;
@@ -43,7 +44,10 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         if (activeCount >= courseClass.getMaxStudents()) {
             throw new BadRequestException("Class is full");
         }
-
+        //Chặn đăng ký nếu lớp đã đóng (CLOSED)
+        if (ClassStatus.CLOSED.equals(courseClass.getStatus())) {
+            throw new BadRequestException("Lớp học đã đóng ghi danh");
+        }
         Student student = studentService.getStudent(request.studentId());
         Enrollment enrollment = new Enrollment();
         enrollment.setStudent(student);

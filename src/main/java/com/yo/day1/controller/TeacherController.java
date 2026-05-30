@@ -5,6 +5,7 @@ import com.yo.day1.dto.teacher.TeacherUpsertRequest;
 import com.yo.day1.service.TeacherService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,5 +40,19 @@ public class TeacherController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         teacherService.delete(id);
+    }
+    //GET /api/teachers?active=true
+    @GetMapping
+    public ResponseEntity<List<TeacherResponse>> getTeachers(
+            @RequestParam(value = "active", required = false) Boolean active) {
+
+        if (active != null) {
+            com.yo.day1.domain.enums.TeacherStatus status = active ?
+                    com.yo.day1.domain.enums.TeacherStatus.ACTIVE :
+                    com.yo.day1.domain.enums.TeacherStatus.INACTIVE;
+            return ResponseEntity.ok(teacherService.findByStatus(status));
+        }
+
+        return ResponseEntity.ok(teacherService.getAll());
     }
 }
