@@ -26,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Billing", description = "Invoice and tuition billing endpoints.")
 @SecurityRequirement(name = "bearerAuth")
-@org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF', 'CASHIER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'ACADEMIC_STAFF', 'CASHIER')")
 public class BillingController {
 
     private final BillingService billingService;
