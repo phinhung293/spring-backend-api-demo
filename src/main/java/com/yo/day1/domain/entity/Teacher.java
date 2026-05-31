@@ -2,17 +2,13 @@ package com.yo.day1.domain.entity;
 
 import com.yo.day1.domain.AuditableEntity;
 import com.yo.day1.domain.enums.TeacherRole;
-import com.yo.day1.domain.enums.TeacherStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
 @Entity
+@Data
 @Table(name = "teachers")
 public class Teacher extends AuditableEntity {
-
     @Column(name = "teacher_code", nullable = false, unique = true, length = 20)
     private String teacherCode;
 
@@ -22,22 +18,18 @@ public class Teacher extends AuditableEntity {
     @Column(nullable = false, unique = true, length = 20)
     private String phone;
 
-    @Column(unique = true, length = 100)
+    @Column(length = 100)
     private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "teacher_role", nullable = false, length = 20)
-    private TeacherRole teacherRole = TeacherRole.TEACHER;
+    private TeacherRole teacherRole;
 
     @Column(name = "cccd_image_url", length = 255)
     private String cccdImageUrl;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
-
-    @Column(length = 255)
-    private String note;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private TeacherStatus status = TeacherStatus.ACTIVE;
+//    @Column(length = 255)
+//    private String note;
 }

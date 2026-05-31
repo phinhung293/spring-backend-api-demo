@@ -97,7 +97,7 @@ public class StudentServiceImpl implements StudentService {
         result.setGradeLevel(student.getGradeLevel());
         result.setSchoolName(student.getSchoolName());
         result.setPhone(student.getPhone());
-        result.setDescription(student.getDescription());
+        //result.setDescription(student.getDescription());
         result.setStatus(student.getStatus());
         result.setLatestScore(student.getLatestScore());
         result.setNote(student.getNote());
@@ -144,5 +144,9 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findByStatus(status).stream()
                 .map(this::map2) // Sử dụng hàm map2 có sẵn của bạn
                 .toList();
+    }
+    @Transactional(readOnly = true)
+    public List<StudentResponse> findByParentId(Long parentId) {
+        return studentRepository.findByParentId(parentId).stream().map(this::map).toList();
     }
 }

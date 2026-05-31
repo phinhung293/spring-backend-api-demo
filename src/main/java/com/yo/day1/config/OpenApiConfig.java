@@ -11,20 +11,23 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class OpenApiConfig {
+    private static final String SECURITY_SCHEME_NAME = "bearerAuth";
 
     @Bean
-    public OpenAPI yoEduOpenApi(@Value("${spring.application.name:YoEdu App}") String applicationName) {
+    public OpenAPI yoEduOpenApi(@Value("${spring.application.name}") String applicationName) {
         return new OpenAPI()
+                .addSecurityItem(new io.swagger.v3.oas.models.security.SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .components(new Components()
-                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                        .addSecuritySchemes(SECURITY_SCHEME_NAME, new SecurityScheme()
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
-                                .bearerFormat("JWT")))
-
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
+                                .bearerFormat("JWT")
+                                .in(SecurityScheme.In.HEADER)))
                 .info(new Info()
                         .title("YoEdu Demo API")
                         .version("v1")
-                        .description("API documentation for the YoEdu training center management demo."));
+                        .description("API documentation for the YoEdu training center management demo.")
+                        .contact(new Contact()
+                                .name(applicationName)));
     }
 }

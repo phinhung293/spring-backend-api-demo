@@ -2,7 +2,6 @@ package com.yo.day1.domain.entity;
 
 import com.yo.day1.domain.AuditableEntity;
 import jakarta.persistence.*;
-import jdk.jfr.Enabled;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +9,6 @@ import java.time.Instant;
 
 @Getter
 @Setter
-@Enabled
 @Entity
 @Table(name = "refresh_token_sessions")
 public class RefreshTokenSession extends AuditableEntity {
@@ -31,4 +29,3 @@ public class RefreshTokenSession extends AuditableEntity {
     @Column(name = "replaced_by_jti", length = 100)
     private String replacedByJti;
 }
-

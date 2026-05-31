@@ -20,6 +20,12 @@ public class AuthController {
         return ApiResponse.success(authService.login(request),"Login successful");
     }
 
+    @PostMapping("/register")
+    public ApiResponse<Void> register(@Valid @RequestBody RegisterRequest request) {
+        authService.register(request);
+        return ApiResponse.successMessage("Registration successful");
+    }
+
     @PostMapping("/refresh")
     public ApiResponse<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
         return ApiResponse.success(authService.refresh(request), "Token refreshed");

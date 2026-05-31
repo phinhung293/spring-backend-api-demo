@@ -5,9 +5,7 @@ import com.yo.day1.domain.enums.Gender;
 import com.yo.day1.domain.enums.StudentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springframework.data.domain.Auditable;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -38,9 +36,6 @@ public class Student extends AuditableEntity {
     @Column(length = 20)
     private String phone;
 
-    @Column(length = 255)
-    private String description;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
     private Parent parent;
@@ -54,6 +49,6 @@ public class Student extends AuditableEntity {
 
     @Column(length = 255)
     private String note;
-
-
+    //@Column(length = 255)
+    //private String description;
 }

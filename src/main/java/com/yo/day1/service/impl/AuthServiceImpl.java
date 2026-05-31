@@ -10,6 +10,7 @@ import com.yo.day1.repository.RefreshTokenSessionRepository;
 import com.yo.day1.repository.UserRepository;
 import com.yo.day1.security.JwtService;
 import com.yo.day1.service.AuthService;
+import com.yo.day1.service.EmailService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -28,12 +29,34 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AppJwtProperties jwtProperties;
+    private final EmailService emailService;
 
     @Transactional()
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new BadCredentialsException("Invalid credentials"));
         return buildTokensForUser(user, request.password());
+    }
+
+    @Transactional
+    public void register(RegisterRequest request) throws BadRequestException {
+        if (userRepository.findByUsername(request.username()).isPresent()) {
+            throw new BadRequestException("Username already exists");
+        }
+
+        User user = new User();
+        user.setUsername(request.username());
+        user.setPasswordHash(passwordEncoder.encode(request.password()));
+        user.setFullName(request.fullName());
+        user.setEmail(request.email());
+        user.setPhone(request.phone());
+        user.setRole(request.role());
+        user.setIsActive(true);
+
+        userRepository.save(user);
+
+        // Gửi email bất đồng bộ
+        emailService.sendAccountInfo(user.getEmail(), user.getUsername(), request.password());
     }
 
     @Transactional(readOnly = true)

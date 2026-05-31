@@ -25,7 +25,7 @@ public class Promotion extends AuditableEntity {
     @Column(name = "discount_type", nullable = false, length = 20)
     private DiscountType discountType;
 
-    @Column(name = "discount_value", nullable = false)
+    @Column(name = "discount_value", nullable = false, columnDefinition = "decimal(12,2)")
     private BigDecimal discountValue;
 
     @Column(name = "start_date", nullable = false)
@@ -40,4 +40,3 @@ public class Promotion extends AuditableEntity {
     @Column(length = 255)
     private String note;
 }
-

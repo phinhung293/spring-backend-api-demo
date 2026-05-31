@@ -1,5 +1,6 @@
 package com.yo.day1.domain.entity;
 
+
 import com.yo.day1.domain.AuditableEntity;
 import com.yo.day1.domain.enums.AttendanceStatus;
 import jakarta.persistence.*;
@@ -13,8 +14,9 @@ import java.time.LocalDate;
 @Setter
 @Getter
 public class Attendance extends AuditableEntity {
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_class_id")
+    @JoinColumn(name = "course_class_id", nullable = false)
     private CourseClass courseClass;
 
     @ManyToOne(fetch = FetchType.LAZY)

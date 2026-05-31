@@ -94,7 +94,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
                 cc.getCodeCode(), // Lưu ý: Đảm bảo cc.getClassCode() tồn tại, nếu đỏ hãy check mục lưu ý phía dưới
                 cc.getName(),
                 cc.getCourse() != null ? cc.getCourse().getName() : null,
-                cc.getMainteacher() != null ? cc.getMainteacher().getFullName() : null,
+                cc.getMainTeacher() != null ? cc.getMainTeacher().getFullName() : null,
                 cc.getTuitionFee(),
                 enrollment.getEnrolledAt(),
                 enrollment.getStatus().name(),

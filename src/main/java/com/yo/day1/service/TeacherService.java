@@ -16,5 +16,5 @@ public interface TeacherService {
     TeacherResponse update(Long id, TeacherUpsertRequest request);
 
     void delete(Long id);
-    java.util.List<com.yo.day1.dto.teacher.TeacherResponse> findByStatus(com.yo.day1.domain.enums.TeacherStatus status);
+    //java.util.List<com.yo.day1.dto.teacher.TeacherResponse> findByStatus(com.yo.day1.domain.enums.TeacherStatus status);
 }

@@ -55,6 +55,6 @@ public class TuitionInvoice extends AuditableEntity {
     @Column(name = "due_date")
     private LocalDate dueDate;
 
-    @Column(length = 255)
-    private String note;
+//    @Column(length = 255)
+//    private String note;
 }

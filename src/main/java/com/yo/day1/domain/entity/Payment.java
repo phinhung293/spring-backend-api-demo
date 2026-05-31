@@ -5,8 +5,6 @@ import com.yo.day1.domain.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,8 +13,6 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "payments")
-@SQLDelete(sql = "UPDATE payments SET deleted = true WHERE id = ?")
-@SQLRestriction("deleted = false")
 public class Payment extends AuditableEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,7 +22,7 @@ public class Payment extends AuditableEntity {
     @Column(name = "payment_code", nullable = false, unique = true, length = 30)
     private String paymentCode;
 
-    @Column(name = "paid_amount", nullable = false, precision = 12, scale = 2)
+    @Column(name = "paid_amount", nullable = false, columnDefinition = "decimal(12,2)")
     private BigDecimal paidAmount;
 
     @Enumerated(EnumType.STRING)
@@ -43,4 +39,3 @@ public class Payment extends AuditableEntity {
     @Column(length = 255)
     private String note;
 }
-

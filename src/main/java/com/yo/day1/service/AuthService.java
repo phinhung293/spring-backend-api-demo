@@ -11,5 +11,5 @@ public interface AuthService {
     void changePassword(String username, ChangePasswordRequest request)throws BadRequestException, NotFoundException;
     CurrentUserResponse me(String username) throws BadRequestException, NotFoundException;
     User findActiveUserByUsername(String username) throws BadRequestException, NotFoundException;
-
+    void register(RegisterRequest request) throws BadRequestException;
 }

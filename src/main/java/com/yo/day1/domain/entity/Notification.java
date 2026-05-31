@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class Notification extends AuditableEntity {
+
     @Enumerated(EnumType.STRING)
     @Column(name = "recipient_type", nullable = false, length = 20)
     private NotificationRecipientType recipientType;
@@ -46,7 +47,7 @@ public class Notification extends AuditableEntity {
     private Boolean isRead = false;
 
 //    @CreationTimestamp
-//    @Column(name = "created_at", nullable = false, updatable = false)
+//    @Column(name = "created_at"; nullable = false; updatable = false)
 //    private LocalDateTime createdAt;
 
 }

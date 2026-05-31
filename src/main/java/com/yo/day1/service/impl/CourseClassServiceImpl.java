@@ -54,11 +54,11 @@ public class CourseClassServiceImpl implements CourseClassService {
         }
 
         if(req.getMainTeacherId() != null){
-            teacherRepository.findById(req.getMainTeacherId()).ifPresent(cc::setMainteacher);
+            teacherRepository.findById(req.getMainTeacherId()).ifPresent(cc::setMainTeacher);
         }
 
         if(req.getAssistantTeacherId() != null){
-            teacherRepository.findById(req.getAssistantTeacherId()).ifPresent(cc::setAssistantteacher);
+            teacherRepository.findById(req.getAssistantTeacherId()).ifPresent(cc::setAssistantTeacher);
         }
         return cc;
     }

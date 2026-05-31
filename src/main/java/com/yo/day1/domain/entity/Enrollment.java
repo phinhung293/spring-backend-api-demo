@@ -32,4 +32,3 @@ public class Enrollment extends AuditableEntity {
     @Column(length = 255)
     private String note;
 }
-

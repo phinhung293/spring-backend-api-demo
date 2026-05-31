@@ -3,15 +3,12 @@ package com.yo.day1.domain.entity;
 import com.yo.day1.domain.AuditableEntity;
 import com.yo.day1.domain.enums.UserRole;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "users")
-@Getter
-@Setter
 public class User extends AuditableEntity {
-
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 

@@ -45,7 +45,7 @@ public class LearningResultServiceImpl implements LearningResultService {
         item.setResultMonth(request.getResultMonth());
         item.setScore(request.getScore());
         //Tự động tính xếp loại trước khi lưu
-        item.setGrade(calculateGrade(request.getScore()));
+        //item.setGrade(calculateGrade(request.getScore()));
         item.setTeacherComment(request.getTeacherComment());
         item.setCreatedByUser(user);
         try {

@@ -26,15 +26,14 @@ public class LearningResult extends AuditableEntity {
     @Column(name = "result_month", nullable = false)
     private LocalDate resultMonth;
 
-    @Column(precision = 5, scale = 2)
+    @Column(columnDefinition = "decimal(5,2)")
     private BigDecimal score;
 
-    @Lob
-    @Column(name = "teacher_comment")
+    @Column(name = "teacher_comment", columnDefinition = "text")
     private String teacherComment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id")
     private User createdByUser;
-    private String grade;
+//    private String grade;
 }

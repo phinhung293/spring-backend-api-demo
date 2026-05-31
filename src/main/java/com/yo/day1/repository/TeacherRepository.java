@@ -9,5 +9,5 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     boolean existsByPhone(String phone);
 
     boolean existsByEmail(String email);
-    java.util.List<Teacher> findByStatus(com.yo.day1.domain.enums.TeacherStatus status);
+    //java.util.List<Teacher> findByStatus(com.yo.day1.domain.enums.TeacherStatus status);
 }

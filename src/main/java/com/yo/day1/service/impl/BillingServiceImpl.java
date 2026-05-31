@@ -72,7 +72,7 @@ public class BillingServiceImpl implements BillingService {
         // Kiểm tra trạng thái PAID nếu số tiền cuối cùng bằng 0
         invoice.setStatus(finalAmount.compareTo(BigDecimal.ZERO) == 0 ? InvoiceStatus.PAID : InvoiceStatus.UNPAID);
         invoice.setDueDate(request.getDueDate());
-        invoice.setNote(request.getNote());
+        //invoice.setNote(request.getNote());
 
         return toInvoiceResponse(tuitionInvoiceRepository.save(invoice));
     }
@@ -143,7 +143,7 @@ public class BillingServiceImpl implements BillingService {
             inv1.setBalanceAmount(finalAmount);
             inv1.setStatus(finalAmount.compareTo(BigDecimal.ZERO) == 0 ? InvoiceStatus.PAID : InvoiceStatus.UNPAID);
             inv1.setDueDate(request.getDueDate());
-            inv1.setNote(request.getNote());
+            //inv1.setNote(request.getNote());
             invoicesToSave.add(inv1);
         }
 
@@ -163,7 +163,7 @@ public class BillingServiceImpl implements BillingService {
             inv2.setBalanceAmount(originalAmount);
             inv2.setStatus(originalAmount.compareTo(BigDecimal.ZERO) == 0 ? InvoiceStatus.PAID : InvoiceStatus.UNPAID);
             inv2.setDueDate(request.getDueDate() != null ? request.getDueDate().plusMonths(1) : null);
-            inv2.setNote(request.getNote());
+            //inv2.setNote(request.getNote());
             invoicesToSave.add(inv2);
         }
 

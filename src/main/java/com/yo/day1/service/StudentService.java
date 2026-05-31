@@ -22,5 +22,6 @@ public interface StudentService {
     Student getStudent(Long id) throws NotFoundException;
     List<StudentResponse> findAll(String search);
     List<StudentResponse> findByStatus(com.yo.day1.domain.enums.StudentStatus status);
+    List<StudentResponse> findByParentId(Long parentId);
 
 }

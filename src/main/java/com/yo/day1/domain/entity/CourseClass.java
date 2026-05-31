@@ -12,34 +12,42 @@ import java.time.LocalDate;
 @Data
 @Table(name = "course_classes")
 public class CourseClass extends AuditableEntity {
-    @Column(columnDefinition = "varchar(20)")
+
+    @Column(name = "class_code", columnDefinition = "varchar(20)")
     private String codeCode;
+
     @Column(columnDefinition = "varchar(100)")
     private String name;
+
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
     @ManyToOne
-    @JoinColumn(name = "room_id", nullable = false)
+    @JoinColumn(name = "room_id")
     private Room room;
+
     @ManyToOne
-    @JoinColumn(name = "schedule_slot_id", nullable = false)
+    @JoinColumn(name = "schedule_slot_id")
     private ScheduleSlot slot;
+
     @ManyToOne
-    @JoinColumn(name = "main_teacher_id", nullable = false)
-    private Teacher mainteacher;
+    @JoinColumn(name = "main_teacher_id")
+    private Teacher mainTeacher;
+
     @ManyToOne
-    @JoinColumn(name = "assistant_teacher_id")//không bắt buộc nên không có nullable=false
-    private Teacher assistantteacher;
+    @JoinColumn(name = "assistant_teacher_id")
+    private Teacher assistantTeacher;
 
     private LocalDate startDate;
     private LocalDate endDate;
 
     private int maxStudents;
-    @Column(columnDefinition = "decimal", precision = 12, scale = 2)
+
+    @Column(name = "tuition_fee", columnDefinition = "decimal(12,2)")
     private BigDecimal tuitionFee;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private ClassStatus status = ClassStatus.OPEN;
-
 }
