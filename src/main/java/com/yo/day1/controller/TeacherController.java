@@ -17,10 +17,7 @@ public class TeacherController {
 
     private final TeacherService teacherService;
 
-    @GetMapping
-    public List<TeacherResponse> getAll() {
-        return teacherService.getAll();
-    }
+
 
     @GetMapping("/{id}")
     public TeacherResponse getById(@PathVariable Long id) {
@@ -46,6 +43,7 @@ public class TeacherController {
     public ResponseEntity<List<TeacherResponse>> getTeachers(
             @RequestParam(value = "active", required = false) Boolean active) {
 
+        // Nếu người dùng truyền param ?active=true hoặc ?active=false
         if (active != null) {
             com.yo.day1.domain.enums.TeacherStatus status = active ?
                     com.yo.day1.domain.enums.TeacherStatus.ACTIVE :
@@ -53,6 +51,7 @@ public class TeacherController {
             return ResponseEntity.ok(teacherService.findByStatus(status));
         }
 
+        // Nếu không truyền param (ví dụ gọi /api/teachers) -> Trả về tất cả như hàm getAll() cũ
         return ResponseEntity.ok(teacherService.getAll());
     }
 }

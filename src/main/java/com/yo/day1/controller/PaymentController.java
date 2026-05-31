@@ -1,7 +1,7 @@
 package com.yo.day1.controller;
 
 import com.yo.day1.common.ApiResponse;
-import com.yo.day1.dto.payment.PaymentResponse;
+import com.yo.day1.dto.billing.PaymentResponse;
 import com.yo.day1.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

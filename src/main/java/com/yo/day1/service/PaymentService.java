@@ -1,7 +1,7 @@
 package com.yo.day1.service;
 
 import com.yo.day1.domain.entity.TuitionInvoice;
-import com.yo.day1.dto.payment.PaymentResponse;
+import com.yo.day1.dto.billing.PaymentResponse;
 
 import java.math.BigDecimal;
 import java.util.List;

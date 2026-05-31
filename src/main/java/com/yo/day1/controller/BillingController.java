@@ -5,6 +5,8 @@ import com.yo.day1.common.exception.BadRequestException;
 import com.yo.day1.common.exception.NotFoundException;
 import com.yo.day1.dto.billing.InvoiceCreateRequest;
 import com.yo.day1.dto.billing.InvoiceResponse;
+import com.yo.day1.dto.billing.PaymentCreateRequest;
+import com.yo.day1.dto.billing.PaymentResponse;
 import com.yo.day1.service.BillingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -59,14 +61,14 @@ public class BillingController {
     public ResponseEntity<List<InvoiceResponse>> createInvoices(@Valid @RequestBody InvoiceCreateRequest req) {
         return ResponseEntity.ok(billingService.createInvoicesForTwoMonths(req));
     }
-    @GetMapping("/student/{studentId}")
-    public ResponseEntity<List<InvoiceResponse>> getStudentInvoices(
-            @PathVariable Long studentId,
-            @RequestParam(value = "month", required = false) Integer month,
-            @RequestParam(value = "year", required = false) Integer year) {
-
-        return ResponseEntity.ok(billingService.getInvoicesByStudent(studentId, month, year));
-    }
+//    @GetMapping("/student/{studentId}")
+//    public ResponseEntity<List<InvoiceResponse>> getStudentInvoices(
+//            @PathVariable Long studentId,
+//            @RequestParam(value = "month", required = false) Integer month,
+//            @RequestParam(value = "year", required = false) Integer year) {
+//
+//        return ResponseEntity.ok(billingService.getInvoicesByStudent(studentId, month, year));
+//    }
     // POST http://localhost:8080/api/billing/bulk
     @PostMapping("/bulk")
     public ResponseEntity<List<InvoiceResponse>> createInvoicesForTwoMonths(@Valid @RequestBody InvoiceCreateRequest request) {
@@ -80,5 +82,10 @@ public class BillingController {
             @RequestParam(value = "year", required = false) Integer year,
             java.security.Principal principal) {
         return ResponseEntity.ok(billingService.findInvoicesByStudentAndFilter(studentId, month, year, principal.getName()));
+    }
+    @PostMapping("/payments")
+    @PreAuthorize("hasAnyRole('ADMIN','CASHIER')")
+    public ApiResponse<PaymentResponse> createPayment(@Valid @RequestBody PaymentCreateRequest request, Principal principal) throws NotFoundException, BadRequestException {
+        return ApiResponse.success(billingService.createPayment(request, principal.getName()),"Payment created");
     }
 }

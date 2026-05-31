@@ -4,7 +4,7 @@ import com.yo.day1.common.exception.NotFoundException;
 import com.yo.day1.domain.entity.Payment;
 import com.yo.day1.domain.entity.TuitionInvoice;
 import com.yo.day1.domain.enums.InvoiceStatus;
-import com.yo.day1.dto.payment.PaymentResponse;
+import com.yo.day1.dto.billing.PaymentResponse;
 import com.yo.day1.repository.PaymentRepository;
 import com.yo.day1.repository.TuitionInvoiceRepository;
 import com.yo.day1.service.PaymentService;

@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-
+//Viết câu Query: Sử dụng Spring thì không suwr dụng câu SQL trực tiếp
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     List<Payment> findByInvoiceId(Long invoiceId);
+    @Query("SELECT o from Payment o where o.invoice.id=:invoiceId")//Sau dấu : đại diện cho biến truyền vào
+    List<Payment>findByInvoice(@Param("invoiceId") long invoiceId);//Biến thông qua @param sẽ truyền vào
 
     @Query("SELECT p FROM Payment p WHERE p.invoice.student.id = :studentId")
     List<Payment> findByStudentId(@Param("studentId") Long studentId);

@@ -2,6 +2,7 @@ package com.yo.day1.service.impl;
 
 import com.yo.day1.common.exception.BadRequestException;
 import com.yo.day1.common.exception.NotFoundException;
+import com.yo.day1.domain.entity.Payment;
 import com.yo.day1.domain.entity.Promotion;
 import com.yo.day1.domain.entity.TuitionInvoice;
 import com.yo.day1.domain.entity.User;
@@ -9,12 +10,13 @@ import com.yo.day1.domain.enums.DiscountType;
 import com.yo.day1.domain.enums.InvoiceStatus;
 import com.yo.day1.dto.billing.InvoiceCreateRequest;
 import com.yo.day1.dto.billing.InvoiceResponse;
+import com.yo.day1.dto.billing.PaymentCreateRequest;
+import com.yo.day1.dto.billing.PaymentResponse;
+import com.yo.day1.repository.EnrollmentRepository;
+import com.yo.day1.repository.PaymentRepository;
 import com.yo.day1.repository.PromotionRepository;
 import com.yo.day1.repository.TuitionInvoiceRepository;
-import com.yo.day1.service.AuthService;
-import com.yo.day1.service.BillingService;
-import com.yo.day1.service.CourseClassService;
-import com.yo.day1.service.StudentService;
+import com.yo.day1.service.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class BillingServiceImpl implements BillingService {
     private final CourseClassService courseClassService;
     private final AuthService authService;
     private final ModelMapper mapper;
+    private final PaymentRepository paymentRepository;
+    private final EnrollmentService enrollmentService;
 
     @Transactional
     public InvoiceResponse createInvoice(InvoiceCreateRequest request) throws NotFoundException {
@@ -186,5 +190,80 @@ public class BillingServiceImpl implements BillingService {
         return tuitionInvoiceRepository.findByStudentIdAndFilter(studentId, month, year).stream()
                 .map(invoice -> mapper.map(invoice, InvoiceResponse.class))
                 .toList();
+    }
+    @Transactional
+    public PaymentResponse createPayment(PaymentCreateRequest request, String username) throws NotFoundException, BadRequestException {
+        // 1. Kiểm tra hóa đơn tồn tại không
+        TuitionInvoice invoice = tuitionInvoiceRepository.findById(request.getInvoiceId())
+                .orElseThrow(() -> new NotFoundException("Invoice not found: " + request.getInvoiceId()));
+
+        // 2. Validate số tiền đóng vào phải lớn hơn 0 (Dùng compareTo với BigDecimal.ZERO)
+        if (request.getPaidAmount() == null || request.getPaidAmount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new BadRequestException("Paid amount must be greater than 0");
+        }
+
+        // 3. Khởi tạo và lưu thông tin giao dịch Payment
+        User cashier = authService.findActiveUserByUsername(username);
+        Payment payment = new Payment();
+        payment.setInvoice(invoice);
+        payment.setPaymentCode(request.getPaymentCode());
+        payment.setPaidAmount(request.getPaidAmount());
+        payment.setPaymentMethod(request.getPaymentMethod());
+        payment.setPaidAt(request.getPaidAt());
+        payment.setCashierUser(cashier);
+        payment.setNote(request.getNote());
+        Payment savedPayment = paymentRepository.save(payment);
+
+        // 4. CHUẨN HÓA BIGDECIMAL: Tính toán lại tiền đã đóng và tiền dư (balance) trên Invoice
+        // Tổng tiền đã đóng mới = Tiền đã đóng cũ + Tiền vừa đóng thêm
+        BigDecimal newAmountPaid = invoice.getAmountPaid().add(request.getPaidAmount());
+
+        // Số tiền còn lại phải đóng (balance) = Số tiền cuối cùng của hóa đơn - Tổng tiền đã đóng mới
+        BigDecimal balance = invoice.getFinalAmount().subtract(newAmountPaid);
+
+        invoice.setAmountPaid(newAmountPaid);
+        invoice.setBalanceAmount(balance);
+
+        // Tính toán trạng thái mới dựa trên số tiền còn lại và số tiền đã đóng
+        invoice.setStatus(calculateInvoiceStatus(balance, newAmountPaid));
+        tuitionInvoiceRepository.save(invoice);
+
+        return toPaymentResponse(savedPayment);
+    }
+
+    // Hàm bổ trợ tính trạng thái hóa đơn chuẩn cú pháp so sánh BigDecimal
+    private InvoiceStatus calculateInvoiceStatus(BigDecimal balance, BigDecimal amountPaid) {
+        if (balance.compareTo(BigDecimal.ZERO) < 0) {
+            return InvoiceStatus.OVERPAID; // Đóng dư tiền
+        }
+        if (balance.compareTo(BigDecimal.ZERO) == 0) {
+            return InvoiceStatus.PAID; // Đã hoàn thành học phí
+        }
+        if (amountPaid.compareTo(BigDecimal.ZERO) > 0) {
+            return InvoiceStatus.PARTIAL; // Mới đóng được một phần
+        }
+        return InvoiceStatus.UNPAID; // Chưa đóng đồng nào
+    }
+    // Hàm map dữ liệu sang PaymentResponse
+    private PaymentResponse toPaymentResponse(Payment item) {
+        return new PaymentResponse(
+                item.getId(),                                                                     // 1. Long id
+                item.getPaymentCode(),                                                            // 2. String paymentCode
+                item.getPaidAmount(),                                                             // 3. BigDecimal paidAmount
+                item.getPaymentMethod(),                                                          // 4. PaymentMethod paymentMethod (Truyền thẳng Enum, không .toString())
+                item.getPaidAt(),                                                                 // 5. LocalDateTime paidAt
+                item.getCashierUser() != null ? item.getCashierUser().getFullName() : null,       // 6. String cashierName
+                item.getNote(),                                                                   // 7. String note
+                item.getInvoice() != null ? item.getInvoice().getInvoiceCode() : null,            // 8. String invoiceCode
+                item.getInvoice() != null && item.getInvoice().getStudent() != null ? item.getInvoice().getStudent().getFullName() : null, // 9. String studentName
+
+                // Các thông tin bổ sung lấy gián tiếp từ Invoice sang (Invoice details)
+                item.getInvoice() != null && item.getInvoice().getCourseClass() != null ? item.getInvoice().getCourseClass().getName() : null, // 10. String className
+                item.getInvoice() != null && item.getInvoice().getBillingMonth() != null ? item.getInvoice().getBillingMonth().toString() : null, // 11. String billingMonth
+                item.getInvoice() != null ? item.getInvoice().getOriginalAmount() : null,         // 12. BigDecimal originalAmount
+                item.getInvoice() != null ? item.getInvoice().getDiscountAmount() : null,         // 13. BigDecimal discountAmount
+                item.getInvoice() != null ? item.getInvoice().getFinalAmount() : null,            // 14. BigDecimal finalAmount
+                item.getInvoice() != null ? item.getInvoice().getBalanceAmount() : null           // 15. BigDecimal balanceAmount
+        );
     }
 }

@@ -1,4 +1,4 @@
-package com.yo.day1.dto.payment;
+package com.yo.day1.dto.billing;
 
 
 import com.yo.day1.domain.enums.PaymentMethod;
